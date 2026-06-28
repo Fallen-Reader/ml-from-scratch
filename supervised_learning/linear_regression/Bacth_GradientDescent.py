@@ -1,5 +1,4 @@
 import os
-import csv
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,16 +8,9 @@ load_dotenv()
 np.random.seed(42)
 
 
-path = os.getenv("PATH")
+path = os.getenv("D_PATH")
 
 data = pd.read_csv(f"{path}/Salary_dataset.csv")
-"""
-fig,ax = plt.subplots()
-ax.scatter(data['YearsExperience'],data['Salary'])
-ax.set_xlabel("Experince")
-ax.set_ylabel("Salary")
-fig.savefig("dataset_plot.png",dpi=300)
-"""
 
 X = data['YearsExperience'].values #feature
 Y = data['Salary'].values #output
@@ -32,8 +24,8 @@ Y_train,Y_test = Y[idx[:split]],Y[idx[split:]]
 
 m= len(X_train)
 
-mean_x,std_x = np.mean(X_train),np.std(X_train)
-mean_y,std_y = np.mean(Y_train),np.std(Y_train)
+mean_x,std_x = np.mean(X_train,axis=0),np.std(X_train,axis=0)
+mean_y,std_y = np.mean(Y_train,axis=0),np.std(Y_train,axis=0)
 
 norm_x_train = (X_train-mean_x)/std_x
 norm_x_test = (X_test-mean_x)/std_x
@@ -47,33 +39,34 @@ print(f"Normalize Y range ->[{norm_y_train.min():.2f},{norm_y_train.max():.2f}]"
 
 #hypothesis
 
-def h(theta,X):
-    return theta[0]+theta[1]*X
+def h(theta,X_b):
+    return X_b @ theta
 
 #cost function
 
-def J(theta,X,y):
+def J(theta,X_b,y):
     m = len(y)
-    error = h(theta,X) - y
+    error = h(theta,X_b) - y
     return (1/(2*m))*np.sum(error**2)
 
 #batch gradient desent
 
-def bacth_gd(X,y,learning_rate=0.1,epochs=50):
+def bacth_gd(X_norm,y,learning_rate=0.1,epochs=50):
     m = len(y)
-    theta = np.zeros(2)
+    X_norm = X_norm.reshape(-1,1)
+    theta = np.zeros(X_norm.shape[1]+1)
+    X_b = np.column_stack([np.ones(m),X_norm])
     cost_hist = []
     for epoch in range(epochs):
-        error = h(theta,X) - y
-        grad_0 = 1/m*np.sum(error)
-        grad_1 = 1/m*np.sum(error*X)
+        error = h(theta,X_b) - y
 
-        theta[0] -= learning_rate*grad_0
-        theta[1] -= learning_rate*grad_1
+        gradient =(1/m)* X_b.T @ error
 
-        cost_hist.append(J(theta,X,y))
-        if epoch % 50 == 0:
-            print(f"Epoch {epoch:>4}  J(θ) = {J(theta, X, y):.6f}")
+        theta -= learning_rate*gradient
+
+        cost_hist.append(J(theta,X_b,y))
+        if epoch % 5 == 0:
+            print(f"Epoch {epoch:>4}  J(θ) = {J(theta, X_b, y):.6f}")
 
     return theta,cost_hist
 
@@ -87,12 +80,21 @@ print(f"theta -> {theta_bgd}\n")
   
 def predict_dollars(years,theta):
     years_norm = (years - mean_x) / std_x 
-    y_norm = h(theta, years_norm)
+    X_b = np.array([1,years_norm])
+    y_norm = h(theta, X_b)
     return y_norm * std_y + mean_y
 
-year = 5
+year = 7
 y_pred_bgd = predict_dollars(year,theta_bgd)
 
- 
+x_test_b = np.column_stack([np.ones(len(norm_x_test)),norm_x_test])
+y_pred_norm = h(theta_bgd,x_test_b)
 
-print(f"pridected salary for 5 year experience person: {y_pred_bgd:.0f}")
+y_pred = y_pred_norm*std_y+mean_y
+
+ss_res = np.sum((Y_test - y_pred) ** 2)   
+ss_tot = np.sum((Y_test - np.mean(Y_test)) ** 2)
+r2 = 1 - ss_res / ss_tot
+
+
+print(f"Predicted salary for {year} years: ${predict_dollars(year, theta_bgd):,.0f}")
