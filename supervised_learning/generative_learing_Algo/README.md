@@ -22,7 +22,7 @@ Given a training set, these algorithms try to find a decision boundary that sepa
 
 For logistic regression, we explicitly model:
 
-$$p(y = 1 \mid x; 	heta) = \frac{1}{1 + e^{-	heta^T x}}$$
+$$p(y = 1 \mid x; 	\theta) = \frac{1}{1 + e^{-	\theta^T x}}$$
 
 **Key insight:** Discriminative algorithms learn $p(y \mid x)$ directly. They ask: *"Given the input $x$, what is the probability of each class?"*
 
@@ -117,6 +117,7 @@ modeling **p(x∣y)**  as a product of independent distributions across feature 
 $$
 p(x \mid y) = \prod_{j \in \text{gaussian}} p(x_j \mid y; \mu_j, \sigma_j) \times \prod_{j \in \text{bernoulli}} p(x_j \mid y; \phi_j)
 $$
+
 And the full joint for a single example:
 
 ### p(x,y)=p(y)⋅p(x∣y)
@@ -137,7 +138,8 @@ $$p(x;\mu,\sigma) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\si
 ```python
 gauss_ll = np.sum(np.log(guassian_pdf(gauss_x, mu, sigma) + 1e-9))
 ```
-This is:**
+This is:
+
 $$\sum_{i=1}^{m} \log p(x_i \mid y; \mu, \sigma) = \sum_{i=1}^{m} \left[ -\log(\sigma \sqrt{2\pi}) - \frac{(x_i - \mu)^2}{2\sigma^2} \right]$$
 
 **Why log?** Products become sums, making optimization tractable. Maximizing the log-likelihood is equivalent to maximizing the likelihood (log is monotonic).
