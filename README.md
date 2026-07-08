@@ -28,7 +28,7 @@ Each folder has its own README — written in plain language, not textbook langu
 
 - [x] Supervised Learning
   - [x] Linear Regression
-  - [ ] Logistic Regression
+  - [x] Logistic Regression
   - [ ] Support Vector Machines
   - [ ] Decision Trees
 - [ ] Unsupervised Learning
