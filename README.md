@@ -2,7 +2,7 @@
 
 A hands-on journal of learning machine learning from scratch.
 
-Every algorithm here is implemented using only **numpy** and **pandas** — no sklearn, no black boxes. The goal is to understand what's actually happening before ever touching a library that hides it.
+Every algorithm here is implemented using only **numpy** and **pandas**.
 
 Math notation follows **CS229 (Andrew Ng, Stanford)** — `h_θ(x)`, `J(θ)`, gradient descent and all. If you've watched those lectures, the code will feel familiar.
 
@@ -30,7 +30,7 @@ Each folder has its own README — written in plain language, not textbook langu
   - [x] Linear Regression
   - [x] Logistic Regression
   - [x] Support Vector Machines
-  - [ ] Decision Trees
+  - [x] Decision Trees
 - [ ] Unsupervised Learning
   - [ ] K-Means Clustering
   - [ ] PCA
